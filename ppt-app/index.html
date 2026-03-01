@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perception for Smart Bike Lights</title>
+    <link rel="stylesheet" href="dist/output.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="progress-bar" id="progress-bar"></div>
+    <div class="fullscreen-hint">Press <strong>F</strong> for fullscreen</div>
+
+    <div class="presentation-container">
+
+        <!-- ══════ Slide 1 — Title ══════ -->
+        <section class="slide active bg-title" id="slide-1">
+            <!-- Background image panels -->
+            <div class="title-bg-left">
+                <img src="./resources/3d-Model-designs/Full-view.png" alt="3D CAD model">
+                <div class="title-bg-label">🖥️ 3D Design</div>
+            </div>
+            <div class="title-bg-right">
+                <img src="../Live_test/real-prototype.jpg" alt="Real prototype">
+                <div class="title-bg-label">🚲 Real Prototype</div>
+            </div>
+            <div class="title-bg-overlay"></div>
+            <!-- Glass panel with text content -->
+            <div class="glass-panel narrow" style="text-align:center;">
+                <div class="badge" style="margin-bottom:1.2rem;">UTN — Lab for Innovation in Technology</div>
+                <h1 class="title">Perception for Smart Bike Lights</h1>
+                <p class="subtitle" style="text-transform:none; letter-spacing:0;">Real-time embedded headlight control
+                    using a Convolutional Neural Network</p>
+                <p class="authors" style="margin-top:1rem;">Sagnik Das, Muhid Abid Siddiqui, Nitish Devrani</p>
+                <p class="supervisor">Supervisor: Prof. Dr. Wolfram Burgard, Débora Oliveira</p>
+            </div>
+        </section>
+
+        <!-- ══════ Slide 2 — Problem & Motivation ══════ -->
+        <section class="slide bg-dark" id="slide-2">
+            <div class="glass-panel">
+                <div class="section-label">Motivation</div>
+                <h2>Why Smart Bike Lights?</h2>
+                <div class="two-column">
+                    <div class="column-text">
+                        <p class="description">Night-time cycling involves rapidly changing lighting — vehicle
+                            headlights, streetlamps, reflections — yet most bike lights are fixed-mode.</p>
+                        <ul>
+                            <li><strong>High beam</strong> maximises rider visibility on dark paths</li>
+                            <li><strong>Low beam</strong> reduces glare for oncoming road users</li>
+                            <li><strong>Off</strong> in daylight — saves battery</li>
+                        </ul>
+                        <p class="description" style="margin-top:1rem;">We need a system that
+                            <strong>automatically</strong> adapts beam state based on the scene — no manual switching.
+                        </p>
+                    </div>
+                    <div style="display:flex; align-items:center; justify-content:center;">
+                        <div class="feature-grid" style="grid-template-columns:1fr;">
+                            <div class="feature-card">
+                                <div class="icon">🌙</div>
+                                <h3>Vision-Only</h3>
+                                <p>Camera-based — no LiDAR, no radar, no extra sensors</p>
+                            </div>
+                            <div class="feature-card">
+                                <div class="icon">⚡</div>
+                                <h3>Real-Time</h3>
+                                <p>Runs at 49 FPS on a Raspberry Pi 5 — embedded & portable</p>
+                            </div>
+                            <div class="feature-card">
+                                <div class="icon">🔄</div>
+                                <h3>End-to-End</h3>
+                                <p>Single CNN maps image → beam state directly</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ══════ Slide 3 — System Architecture ══════ -->
+        <section class="slide bg-deep" id="slide-3">
+            <div class="glass-panel wide">
+                <div class="section-label">System Design</div>
+                <h2>System Architecture</h2>
+                <div class="two-column wide-right">
+                    <div class="column-text">
+                        <ul>
+                            <li><strong>ESP32-CAM</strong> streams low-res MJPEG over Wi-Fi</li>
+                            <li><strong>Raspberry Pi 5</strong> runs CNN inference at 10 Hz</li>
+                            <li><strong>Temporal stabilisation</strong> — threshold averaging, hold time, anti-flicker
+                                logic</li>
+                            <li><strong>GPIO</strong> drives relay switching headlight modes</li>
+                            <li><strong>3D-printed enclosure</strong> protects hardware on the bike</li>
+                        </ul>
+                        <div class="stats-row" style="justify-content:flex-start; margin-top:1.5rem;">
+                            <div class="stat">
+                                <span class="stat-number" style="font-size:2.2rem;">20.4ms</span>
+                                <span class="stat-label">Inference</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number" style="font-size:2.2rem;">4.2M</span>
+                                <span class="stat-label">Parameters</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="image-showcase">
+                        <img src="./resources/circuit_diagram.png"
+                            alt="Circuit diagram showing ESP32-CAM, Raspberry Pi 5, relay, and headlight wiring">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ══════ Slide 4 — Model Evolution ══════ -->
+        <section class="slide bg-dark" id="slide-4">
+            <div class="glass-panel">
+                <div class="section-label">Design Iterations</div>
+                <h2>Model Evolution: A → E</h2>
+                <p class="description">Five design variants, each addressing deployment challenges discovered during
+                    testing.</p>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Variant</th>
+                            <th>Components</th>
+                            <th>Supervision</th>
+                            <th>Deploy</th>
+                            <th>Inference (ms)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>A</td>
+                            <td>ResNet18 + YOLO</td>
+                            <td>ImageNet + COCO</td>
+                            <td>Multi-model</td>
+                            <td>91.9</td>
+                        </tr>
+                        <tr>
+                            <td>B</td>
+                            <td>Compact CNN + YOLO</td>
+                            <td>ImageNet + COCO</td>
+                            <td>Multi-model</td>
+                            <td>70.8</td>
+                        </tr>
+                        <tr>
+                            <td>C</td>
+                            <td>CNN + Relevance CNN</td>
+                            <td>Manual events</td>
+                            <td>Multi-model</td>
+                            <td>14.6</td>
+                        </tr>
+                        <tr>
+                            <td>D</td>
+                            <td>Multi-head CNN</td>
+                            <td>Policy-derived</td>
+                            <td>Single</td>
+                            <td>11.1</td>
+                        </tr>
+                        <tr class="highlight">
+                            <td><strong>E ✓</strong></td>
+                            <td><strong>Single Residual CNN</strong></td>
+                            <td><strong>Policy-derived</strong></td>
+                            <td><strong>Single</strong></td>
+                            <td><strong>20.4</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p style="font-size:0.85rem; color:#64748b; margin-top:1rem;">Variant E selected — eliminates
+                    inter-model thresholds, uses scalable policy-derived labels from BDD100K.</p>
+            </div>
+        </section>
+
+        <!-- ══════ Slide 5 — Training & Dataset ══════ -->
+        <section class="slide bg-deep" id="slide-5">
+            <div class="glass-panel wide">
+                <div class="section-label">Training</div>
+                <h2>Dataset & Training Pipeline</h2>
+                <div class="two-column">
+                    <div class="column-text">
+                        <ul>
+                            <li><strong>BDD100K</strong> driving dataset — 70K+ derived beam labels</li>
+                            <li><strong>Rule-based labelling:</strong> time-of-day + hazard bounding boxes → off / dim /
+                                high</li>
+                            <li>Class imbalance: off 56.5%, dim 34.9%, high 8.6%</li>
+                            <li>Oversampling factor K=3 for minority class</li>
+                            <li>AdamW + cosine schedule + EMA weights</li>
+                            <li>224×224 input, ImageNet normalisation</li>
+                            <li>Augmentation: colour jitter, gamma, Gaussian blur</li>
+                        </ul>
+                        <p style="font-size:0.85rem; color:#64748b; margin-top:1rem;">+ 1,979 real bike-cam images for
+                            on-bike validation</p>
+                    </div>
+                    <div class="image-showcase">
+                        <img src="./resources/training_curves.png"
+                            alt="Training and validation loss curves over 20 epochs" style="background:#fff;">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ══════ Slide 6 — Test Set Results ══════ -->
+        <section class="slide bg-results" id="slide-6">
+            <div class="glass-panel wide">
+                <div class="section-label">Results — Test Set</div>
+                <h2>Test Set Performance</h2>
+                <div class="stats-row">
+                    <div class="stat">
+                        <span class="stat-number">93.99%</span>
+                        <span class="stat-label">Overall Accuracy</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">49</span>
+                        <span class="stat-label">FPS (RPi 5)</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">4.2M</span>
+                        <span class="stat-label">Parameters</span>
+                    </div>
+                </div>
+                <div class="image-grid cols-2">
+                    <div class="image-card">
+                        <img src="./resources/confusion_matrix.png" alt="Confusion matrix: off, dim, high">
+                        <div class="caption">Confusion Matrix — 18,482 test images</div>
+                    </div>
+                    <div class="image-card">
+                        <img src="./resources/per_class_f1.png" alt="Per-class F1 scores">
+                        <div class="caption">Per-class F1 — off: 99%, dim: 91%, high: 73%</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ══════ Slide 7 — On-Bike Evaluation ══════ -->
+        <section class="slide bg-results" id="slide-7">
+            <div class="glass-panel wide">
+                <div class="section-label">Results — On-Bike Ablation</div>
+                <h2>On-Bike Evaluation (255 Segments)</h2>
+                <div class="two-column">
+                    <div>
+                        <table class="data-table" style="margin-bottom:1rem;">
+                            <thead>
+                                <tr>
+                                    <th>Model</th>
+                                    <th>Score</th>
+                                    <th>Recall</th>
+                                    <th>FPR</th>
+                                    <th>Inf (ms)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>C (CNN+Rel)</td>
+                                    <td>0.219</td>
+                                    <td>0.976</td>
+                                    <td>0.471</td>
+                                    <td>14.6</td>
+                                </tr>
+                                <tr>
+                                    <td>B (CNN+YOLO)</td>
+                                    <td>0.219</td>
+                                    <td>0.976</td>
+                                    <td>0.471</td>
+                                    <td>32.5</td>
+                                </tr>
+                                <tr class="highlight">
+                                    <td><strong>E (Single)</strong></td>
+                                    <td><strong>0.185</strong></td>
+                                    <td><strong>0.861</strong></td>
+                                    <td><strong>0.354</strong></td>
+                                    <td><strong>20.4</strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.5;">
+                            <strong style="color:#fff;">Safety-first composite:</strong><br>
+                            score = 0.55·recall − 0.25·fpr − 0.20·latency<sub>norm</sub>
+                        </p>
+                        <p style="font-size:0.8rem; color:#64748b; margin-top:0.5rem;">Variant E: lowest FPR with
+                            scalable policy supervision</p>
+                    </div>
+                    <div class="image-showcase">
+                        <img src="./resources/fpr_vs_recall.png"
+                            alt="FPR vs Recall scatter plot comparing all model variants" style="background:#fff;">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ══════ Slide 8 — Inference Examples ══════ -->
+        <section class="slide bg-deep" id="slide-8">
+            <div class="glass-panel wide">
+                <div class="section-label">Results — Live Inference</div>
+                <h2>Real-World Inference Examples</h2>
+                <p class="description">On-bike ESP32-CAM frames with model predictions overlaid. The system dims when
+                    hazards (oncoming headlights) are detected, and restores high beam when the road is clear.</p>
+                <div class="frame-pair">
+                    <div class="frame-card">
+                        <img src="./resources/1-low.png"
+                            alt="Night scene with oncoming headlights — model predicts LOW beam">
+                        <div class="frame-label">
+                            <span>Oncoming headlights detected</span>
+                            <span class="beam-state low">● LOW BEAM</span>
+                        </div>
+                    </div>
+                    <div class="frame-card">
+                        <img src="./resources/3-high.png" alt="Night scene with clear road — model predicts HIGH beam">
+                        <div class="frame-label">
+                            <span>Clear road — no hazard</span>
+                            <span class="beam-state high">● HIGH BEAM</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ══════ Slide 9 — Hardware & Deployment ══════ -->
+        <section class="slide bg-dark" id="slide-9">
+            <div class="glass-panel wide">
+                <div class="section-label">Deployment</div>
+                <h2>Hardware & 3D-Printed Enclosure</h2>
+                <div class="two-column wide-right">
+                    <div class="column-text">
+                        <ul>
+                            <li><strong>ESP32-CAM</strong> — $5 camera module on handlebars</li>
+                            <li><strong>Raspberry Pi 5</strong> — inference + GPIO control</li>
+                            <li><strong>12V relay</strong> — switches headlight power modes</li>
+                            <li>Custom <strong>3D-printed enclosures</strong> — weatherproof mounting</li>
+                            <li>Designed for outdoor rain & snow conditions</li>
+                        </ul>
+                        <table class="data-table" style="margin-top:1rem;">
+                            <thead>
+                                <tr>
+                                    <th>Metric</th>
+                                    <th>Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Model size</td>
+                                    <td>4.2M params</td>
+                                </tr>
+                                <tr>
+                                    <td>Inference time</td>
+                                    <td>20.4 ms</td>
+                                </tr>
+                                <tr>
+                                    <td>Throughput</td>
+                                    <td>49 FPS</td>
+                                </tr>
+                                <tr>
+                                    <td>Input resolution</td>
+                                    <td>224 × 224 px</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="image-showcase">
+                        <img src="./resources/3D models for hardware.png"
+                            alt="3D printed enclosure CAD models for SmartBike Light system">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ══════ Slide 10 — Live Test Videos ══════ -->
+        <section class="slide bg-video" id="slide-10">
+            <div class="glass-panel extra-wide video-slide-panel">
+                <div class="section-label">Live Testing</div>
+                <h2>Night Ride — Live Test Footage</h2>
+                <div class="video-grid cols-2x2">
+                    <div class="video-card">
+                        <video autoplay muted loop playsinline preload="metadata">
+                            <source src="../LiT-videos/web/bright-car-passing.mp4" type="video/mp4">
+                        </video>
+                        <div class="video-label">Sample 1</div>
+                    </div>
+                    <div class="video-card">
+                        <video autoplay muted loop playsinline preload="metadata">
+                            <source src="../LiT-videos/web/bus-passing.mp4" type="video/mp4">
+                        </video>
+                        <div class="video-label">Sample 2</div>
+                    </div>
+                    <div class="video-card">
+                        <video autoplay muted loop playsinline preload="metadata">
+                            <source src="../LiT-videos/web/car-pass-by.mp4" type="video/mp4">
+                        </video>
+                        <div class="video-label">Sample 3</div>
+                    </div>
+                    <div class="video-card">
+                        <video autoplay muted loop playsinline preload="metadata">
+                            <source src="../LiT-videos/web/far-car-left-turn.mp4" type="video/mp4">
+                        </video>
+                        <div class="video-label">Sample 4</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ══════ Slide 11 — Conclusion ══════ -->
+        <section class="slide bg-conclusion" id="slide-11">
+            <div class="glass-panel narrow" style="text-align:center;">
+                <div class="section-label">Conclusion</div>
+                <h2>Key Takeaways</h2>
+                <ul class="bullet-list" style="text-align:left; max-width:500px; margin:0 auto 1.5rem;">
+                    <li><strong>Single lightweight CNN</strong> outputs beam state (off / dim / high) end-to-end</li>
+                    <li><strong>93.99% accuracy</strong> on 18K test images at 49 FPS</li>
+                    <li>Policy-derived labels from <strong>BDD100K</strong> — no manual annotation</li>
+                    <li>Temporal stabilisation ensures <strong>flicker-free</strong> on-bike control</li>
+                    <li>Complete edge deployment: ESP32-CAM + RPi 5 + relay + 3D enclosure</li>
+                </ul>
+                <h3 style="color:var(--accent-cyan); margin-bottom:0.75rem;">Future Work</h3>
+                <ul class="bullet-list" style="text-align:left; max-width:500px; margin:0 auto 2rem;">
+                    <li>Twilight transition handling</li>
+                    <li>Temporal modelling for hazard persistence</li>
+                    <li>Distance & speed-aware hazard estimation</li>
+                </ul>
+                <div class="badge">Thank you — Questions?</div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+        <button id="prev-btn" class="control-btn" aria-label="Previous Slide">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M15 18l-6-6 6-6" />
+            </svg>
+        </button>
+        <div class="slide-indicator">
+            <span id="current-slide">1</span> / <span id="total-slides">11</span>
+        </div>
+        <button id="next-btn" class="control-btn" aria-label="Next Slide">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18l6-6-6-6" />
+            </svg>
+        </button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
